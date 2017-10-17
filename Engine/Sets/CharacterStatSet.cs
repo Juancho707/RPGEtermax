@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Engine.Sets
+﻿namespace Engine.Sets
 {
     /// <summary>
     /// Stat set for game characters.
@@ -25,5 +19,29 @@ namespace Engine.Sets
         /// Character heal skill.
         /// </summary>
         public int HealSkill { get; set; }
+
+        /// <summary>
+        /// Character fighting type.
+        /// </summary>
+        public AttackType AttackType { get; set; }
+
+        /// <summary>
+        /// Gets the character attack range based on its class.
+        /// </summary>
+        public int AttackRange
+        {
+            get
+            {
+                switch (AttackType)
+                {
+                    case AttackType.Melee:
+                        return 2;
+                    case AttackType.Ranged:
+                        return 20;
+
+                }
+                return 2;
+            }
+        }
     }
 }

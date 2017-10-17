@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Engine.Interfaces;
 using Engine.Sets;
 
@@ -11,7 +7,7 @@ namespace Engine.Entities
     /// <summary>
     /// Game character entity.
     /// </summary>
-    public class Character : IDamageable
+    public class Character : GameEntity, IDamageable
     {
         /// <summary>
         /// Character stat set.
@@ -28,22 +24,14 @@ namespace Engine.Entities
         /// </summary>
         /// <param name="hp">Max health value.</param>
         /// <param name="lvl">Initial level value.</param>
-        public Character(int hp, int lvl)
+        public Character(int hp, int lvl, AttackType atkClass)
         {
             Stats = new CharacterStatSet();
 
+            Stats.AttackType = atkClass;
             Stats.MaxHealth = hp;
             Stats.CurrentHealth = Stats.MaxHealth;
             Stats.Level = lvl;
-        }
-
-        /// <summary>
-        /// Default instantiator for character class.
-        /// </summary>
-        /// <returns>A new default character with 1000 hp and level 1.</returns>
-        public static Character CreateDefaultCharacter()
-        {
-            return new Character(1000, 1);
         }
 
         /// <summary>
@@ -55,21 +43,26 @@ namespace Engine.Entities
             if (target != this)
             {
                 var totalDamage = Stats.AttackSkill;
-                var enemy = target as Character;
+                var entity = target as GameEntity;
 
-                if (enemy != null)
+                if (entity != null && GetDistanceToEntity(entity) <= this.Stats.AttackRange)
                 {
-                    if (enemy.Stats.Level >= this.Stats.Level + Settings.LevelDisparityThreshold)
-                    {
-                        totalDamage -= (Settings.LevelDisparityDamageModifier * totalDamage) / 100;
-                    }
-                    else if (enemy.Stats.Level + Settings.LevelDisparityThreshold <= this.Stats.Level)
-                    {
-                        totalDamage += (Settings.LevelDisparityDamageModifier * totalDamage) / 100;
-                    }
-                }
+                    var enemy = target as Character;
 
-                target.ReceiveDamage(totalDamage);
+                    if (enemy != null)
+                    {
+                        if (enemy.Stats.Level >= this.Stats.Level + Settings.LevelDisparityThreshold)
+                        {
+                            totalDamage -= (Settings.LevelDisparityDamageModifier * totalDamage) / 100;
+                        }
+                        else if (enemy.Stats.Level + Settings.LevelDisparityThreshold <= this.Stats.Level)
+                        {
+                            totalDamage += (Settings.LevelDisparityDamageModifier * totalDamage) / 100;
+                        }
+                    }
+
+                    target.ReceiveDamage(totalDamage);
+                }
             }
         }
 
@@ -108,6 +101,44 @@ namespace Engine.Entities
                     Stats.CurrentHealth = Stats.MaxHealth;
                 }
             }
+        }
+
+        public int GetDistanceToEntity(GameEntity target)
+        {
+            return Math.Abs(this.Position - target.Position);
+        }
+
+        /// <summary>
+        /// Default instantiator for character class.
+        /// </summary>
+        /// <returns>A new default character with 1000 hp and level 1.</returns>
+        public static Character CreateDefaultCharacter()
+        {
+            return new Character(1000, 1, AttackType.Melee);
+        }
+
+        /// <summary>
+        /// Default instantiator for a melee character.
+        /// </summary>
+        /// <param name="pos">Character position.</param>
+        /// <returns>A new melee character.</returns>
+        public static Character CreateDefaultMeleeCharacter(int pos)
+        {
+            var ch = new Character(1000, 1, AttackType.Melee);
+            ch.Position = pos;
+            return ch;
+        }
+
+        /// <summary>
+        /// Default instantiator for a ranged character.
+        /// </summary>
+        /// <param name="pos">Character position.</param>
+        /// <returns>A new ranged character.</returns>
+        public static Character CreateDefaultRangedCharacter(int pos)
+        {
+            var ch = new Character(1000, 1, AttackType.Ranged);
+            ch.Position = pos;
+            return ch;
         }
     }
 }

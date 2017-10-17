@@ -18,7 +18,7 @@ namespace EngineTests.Entities
         [TestMethod]
         public void CharacterInitialization()
         {
-            var newCharacter = new Character(500, 5);
+            var newCharacter = new Character(500, 5, 0);
 
             Assert.AreEqual(500, newCharacter.Stats.CurrentHealth);
             Assert.AreEqual(5, newCharacter.Stats.Level);
@@ -126,6 +126,44 @@ namespace EngineTests.Entities
 
             Assert.IsTrue(char2.IsAlive);
             Assert.AreEqual(550, char2.Stats.CurrentHealth);
+        }
+
+        [TestMethod]
+        public void AttackRanged()
+        {
+            var char1 = Character.CreateDefaultRangedCharacter(0);
+            char1.Stats.AttackSkill = 300;
+
+            var char2 = Character.CreateDefaultMeleeCharacter(15);
+            char2.Stats.AttackSkill = 600;
+
+            char1.Attack(char2);
+            char2.Attack(char1);
+
+            Assert.IsTrue(char1.IsAlive);
+            Assert.IsTrue(char2.IsAlive);
+
+            Assert.AreEqual(1000, char1.Stats.CurrentHealth);
+            Assert.AreEqual(700, char2.Stats.CurrentHealth);
+        }
+
+        [TestMethod]
+        public void AttackMelee()
+        {
+            var char1 = Character.CreateDefaultRangedCharacter(0);
+            char1.Stats.AttackSkill = 300;
+
+            var char2 = Character.CreateDefaultMeleeCharacter(2);
+            char2.Stats.AttackSkill = 600;
+
+            char1.Attack(char2);
+            char2.Attack(char1);
+
+            Assert.IsTrue(char1.IsAlive);
+            Assert.IsTrue(char2.IsAlive);
+
+            Assert.AreEqual(400, char1.Stats.CurrentHealth);
+            Assert.AreEqual(700, char2.Stats.CurrentHealth);
         }
     }
 }
