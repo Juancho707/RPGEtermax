@@ -11,8 +11,8 @@ namespace EngineTests.Entities
         {
             var newCharacter = Character.CreateDefaultCharacter();
 
-            Assert.AreEqual(1000, newCharacter.CurrentHealth);
-            Assert.AreEqual(1, newCharacter.Level);
+            Assert.AreEqual(1000, newCharacter.Stats.CurrentHealth);
+            Assert.AreEqual(1, newCharacter.Stats.Level);
         }
 
         [TestMethod]
@@ -20,8 +20,8 @@ namespace EngineTests.Entities
         {
             var newCharacter = new Character(500, 5);
 
-            Assert.AreEqual(500, newCharacter.CurrentHealth);
-            Assert.AreEqual(5, newCharacter.Level);
+            Assert.AreEqual(500, newCharacter.Stats.CurrentHealth);
+            Assert.AreEqual(5, newCharacter.Stats.Level);
         }
 
         [TestMethod]
@@ -29,12 +29,12 @@ namespace EngineTests.Entities
         {
             var char1 = Character.CreateDefaultCharacter();
             var char2 = Character.CreateDefaultCharacter();
-            char1.AttackSkill = 300;
+            char1.Stats.AttackSkill = 300;
 
             char1.Attack(char2);
 
             Assert.IsTrue(char2.IsAlive);
-            Assert.AreEqual(700, char2.CurrentHealth);
+            Assert.AreEqual(700, char2.Stats.CurrentHealth);
         }
 
         [TestMethod]
@@ -43,12 +43,12 @@ namespace EngineTests.Entities
             var char1 = Character.CreateDefaultCharacter();
             var char2 = Character.CreateDefaultCharacter();
             char2.ReceiveDamage(500);
-            char1.HealSkill = 300;
+            char1.Stats.HealSkill = 300;
 
             char1.Heal(char2);
 
             Assert.IsTrue(char2.IsAlive);
-            Assert.AreEqual(800, char2.CurrentHealth);
+            Assert.AreEqual(800, char2.Stats.CurrentHealth);
         }
 
         [TestMethod]
@@ -58,7 +58,7 @@ namespace EngineTests.Entities
             newCharacter.ReceiveDamage(1200);
 
             Assert.IsFalse(newCharacter.IsAlive);
-            Assert.AreEqual(0, newCharacter.CurrentHealth);
+            Assert.AreEqual(0, newCharacter.Stats.CurrentHealth);
         }
 
         [TestMethod]
@@ -68,7 +68,7 @@ namespace EngineTests.Entities
             newCharacter.ReceiveDamage(300);
             newCharacter.HealDamage(600);
 
-            Assert.AreEqual(newCharacter.MaxHealth, newCharacter.CurrentHealth);
+            Assert.AreEqual(newCharacter.Stats.MaxHealth, newCharacter.Stats.CurrentHealth);
         }
     }
 }

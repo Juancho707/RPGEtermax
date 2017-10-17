@@ -12,7 +12,7 @@ namespace EngineTests.Entities
             var newCharacter = Character.CreateDefaultCharacter();
             newCharacter.ReceiveDamage(300);
 
-            Assert.AreEqual(700, newCharacter.CurrentHealth);
+            Assert.AreEqual(700, newCharacter.Stats.CurrentHealth);
         }
 
         [TestMethod]
@@ -22,7 +22,7 @@ namespace EngineTests.Entities
             newCharacter.ReceiveDamage(300);
             newCharacter.HealDamage(100);
 
-            Assert.AreEqual(800, newCharacter.CurrentHealth);
+            Assert.AreEqual(800, newCharacter.Stats.CurrentHealth);
         }
     }
 }

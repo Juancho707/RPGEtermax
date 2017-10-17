@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Engine.Interfaces;
+using Engine.Sets;
 
 namespace Engine.Entities
 {
@@ -12,31 +13,15 @@ namespace Engine.Entities
     /// </summary>
     public class Character : IDamageable
     {
-        /// <inheritdoc />
-        public int MaxHealth { get; set; }
-
-        /// <inheritdoc />
-        public int CurrentHealth { get; set; }
+        /// <summary>
+        /// Character stat set.
+        /// </summary>
+        public CharacterStatSet Stats { get; set; }
 
         /// <summary>
-        /// Character level.
+        /// Gets a value indicating if the character is alive or not.
         /// </summary>
-        public int Level { get; set; }
-
-        /// <summary>
-        /// Gets or sets a value indicating if the character is alive or not.
-        /// </summary>
-        public bool IsAlive { get; set; }
-
-        /// <summary>
-        /// Character attack skill.
-        /// </summary>
-        public int AttackSkill { get; set; }
-
-        /// <summary>
-        /// Character heal skill.
-        /// </summary>
-        public int HealSkill { get; set; }
+        public bool IsAlive => Stats.CurrentHealth > 0;
 
         /// <summary>
         /// Instantiates an instance of character class with the provided values.
@@ -45,10 +30,11 @@ namespace Engine.Entities
         /// <param name="lvl">Initial level value.</param>
         public Character(int hp, int lvl)
         {
-            MaxHealth = hp;
-            CurrentHealth = MaxHealth;
-            Level = lvl;
-            IsAlive = hp > 0;
+            Stats = new CharacterStatSet();
+
+            Stats.MaxHealth = hp;
+            Stats.CurrentHealth = Stats.MaxHealth;
+            Stats.Level = lvl;
         }
 
         /// <summary>
@@ -66,7 +52,7 @@ namespace Engine.Entities
         /// <param name="target">Target to attack.</param>
         public void Attack(IDamageable target)
         {
-            target.ReceiveDamage(AttackSkill);
+            target.ReceiveDamage(Stats.AttackSkill);
         }
 
         /// <summary>
@@ -75,18 +61,17 @@ namespace Engine.Entities
         /// <param name="target">Target to heal.</param>
         public void Heal(IDamageable target)
         {
-            target.HealDamage(HealSkill);
+            target.HealDamage(Stats.HealSkill);
         }
 
         /// <inheritdoc />
         public void ReceiveDamage(int dmg)
         {
-            CurrentHealth -= dmg;
+            Stats.CurrentHealth -= dmg;
 
-            if (CurrentHealth <= 0)
+            if (Stats.CurrentHealth <= 0)
             {
-                CurrentHealth = 0;
-                IsAlive = false;
+                Stats.CurrentHealth = 0;
             }
         }
 
@@ -95,11 +80,11 @@ namespace Engine.Entities
         {
             if (IsAlive)
             {
-                CurrentHealth += healAmount;
+                Stats.CurrentHealth += healAmount;
 
-                if (CurrentHealth > MaxHealth)
+                if (Stats.CurrentHealth > Stats.MaxHealth)
                 {
-                    CurrentHealth = MaxHealth;
+                    Stats.CurrentHealth = Stats.MaxHealth;
                 }
             }
         }

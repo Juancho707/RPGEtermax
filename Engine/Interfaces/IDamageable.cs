@@ -13,16 +13,6 @@ namespace Engine.Interfaces
     public interface IDamageable
     {
         /// <summary>
-        /// Maximum health value.
-        /// </summary>
-        int MaxHealth { get; set; }
-
-        /// <summary>
-        /// Current health value.
-        /// </summary>
-        int CurrentHealth { get; set; }
-
-        /// <summary>
         /// Implementation for receiving damage.
         /// </summary>
         /// <param name="dmg">Amount of damage received.</param>
