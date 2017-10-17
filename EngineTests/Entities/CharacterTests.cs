@@ -7,7 +7,7 @@ namespace EngineTests.Entities
     public class CharacterTests
     {
         [TestMethod]
-        public void TestDefaultCharacterInitialization()
+        public void DefaultCharacterInitialization()
         {
             var newCharacter = Character.CreateDefaultCharacter();
 
@@ -16,7 +16,7 @@ namespace EngineTests.Entities
         }
 
         [TestMethod]
-        public void TestCharacterInitialization()
+        public void CharacterInitialization()
         {
             var newCharacter = new Character(500, 5);
 
@@ -25,12 +25,13 @@ namespace EngineTests.Entities
         }
 
         [TestMethod]
-        public void TestAttack()
+        public void AttackOther()
         {
             var char1 = Character.CreateDefaultCharacter();
-            var char2 = Character.CreateDefaultCharacter();
             char1.Stats.AttackSkill = 300;
 
+            var char2 = Character.CreateDefaultCharacter();
+            
             char1.Attack(char2);
 
             Assert.IsTrue(char2.IsAlive);
@@ -38,21 +39,47 @@ namespace EngineTests.Entities
         }
 
         [TestMethod]
-        public void TestHeal()
+        public void AttackSelf()
         {
             var char1 = Character.CreateDefaultCharacter();
-            var char2 = Character.CreateDefaultCharacter();
-            char2.ReceiveDamage(500);
-            char1.Stats.HealSkill = 300;
+            char1.Stats.AttackSkill = 300;
 
-            char1.Heal(char2);
+            char1.Attack(char1);
 
-            Assert.IsTrue(char2.IsAlive);
-            Assert.AreEqual(800, char2.Stats.CurrentHealth);
+            Assert.IsTrue(char1.IsAlive);
+            Assert.AreEqual(1000, char1.Stats.CurrentHealth);
         }
 
         [TestMethod]
-        public void TestKill()
+        public void HealOther()
+        {
+            var char1 = Character.CreateDefaultCharacter();
+            char1.Stats.HealSkill = 300;
+
+            var char2 = Character.CreateDefaultCharacter();
+            char2.ReceiveDamage(500);
+            
+            char1.Heal(char2);
+
+            Assert.IsTrue(char2.IsAlive);
+            Assert.AreEqual(500, char2.Stats.CurrentHealth);
+        }
+
+        [TestMethod]
+        public void HealSelf()
+        {
+            var char1 = Character.CreateDefaultCharacter();
+            char1.ReceiveDamage(500);
+            char1.Stats.HealSkill = 300;
+
+            char1.Heal(char1);
+
+            Assert.IsTrue(char1.IsAlive);
+            Assert.AreEqual(800, char1.Stats.CurrentHealth);
+        }
+
+        [TestMethod]
+        public void Kill()
         {
             var newCharacter = Character.CreateDefaultCharacter();
             newCharacter.ReceiveDamage(1200);
@@ -62,13 +89,43 @@ namespace EngineTests.Entities
         }
 
         [TestMethod]
-        public void TestHealOverTop()
+        public void HealOverTop()
         {
             var newCharacter = Character.CreateDefaultCharacter();
             newCharacter.ReceiveDamage(300);
             newCharacter.HealDamage(600);
 
             Assert.AreEqual(newCharacter.Stats.MaxHealth, newCharacter.Stats.CurrentHealth);
+        }
+
+        [TestMethod]
+        public void AttackHigherLevelEnemy()
+        {
+            var char1 = Character.CreateDefaultCharacter();
+            char1.Stats.AttackSkill = 300;
+
+            var char2 = Character.CreateDefaultCharacter();
+            char2.Stats.Level = 8;
+
+            char1.Attack(char2);
+
+            Assert.IsTrue(char2.IsAlive);
+            Assert.AreEqual(850, char2.Stats.CurrentHealth);
+        }
+
+        [TestMethod]
+        public void AttackLowerLevelEnemy()
+        {
+            var char1 = Character.CreateDefaultCharacter();
+            char1.Stats.AttackSkill = 300;
+            char1.Stats.Level = 8;
+
+            var char2 = Character.CreateDefaultCharacter();
+            
+            char1.Attack(char2);
+
+            Assert.IsTrue(char2.IsAlive);
+            Assert.AreEqual(550, char2.Stats.CurrentHealth);
         }
     }
 }
