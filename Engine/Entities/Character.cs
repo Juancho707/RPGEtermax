@@ -52,7 +52,25 @@ namespace Engine.Entities
         /// <param name="target">Target to attack.</param>
         public void Attack(IDamageable target)
         {
-            target.ReceiveDamage(Stats.AttackSkill);
+            if (target != this)
+            {
+                var totalDamage = Stats.AttackSkill;
+                var enemy = target as Character;
+
+                if (enemy != null)
+                {
+                    if (enemy.Stats.Level >= this.Stats.Level + Settings.LevelDisparityThreshold)
+                    {
+                        totalDamage -= (Settings.LevelDisparityDamageModifier * totalDamage) / 100;
+                    }
+                    else if (enemy.Stats.Level + Settings.LevelDisparityThreshold <= this.Stats.Level)
+                    {
+                        totalDamage += (Settings.LevelDisparityDamageModifier * totalDamage) / 100;
+                    }
+                }
+
+                target.ReceiveDamage(totalDamage);
+            }
         }
 
         /// <summary>
@@ -61,7 +79,10 @@ namespace Engine.Entities
         /// <param name="target">Target to heal.</param>
         public void Heal(IDamageable target)
         {
-            target.HealDamage(Stats.HealSkill);
+            if (target == this)
+            {
+                target.HealDamage(Stats.HealSkill);
+            }
         }
 
         /// <inheritdoc />
